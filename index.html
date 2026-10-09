@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Sesli Çizim Tuvali</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #12131a;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    header { text-align: center; margin-bottom: 16px; }
+    h1 { font-size: 1.5rem; margin-bottom: 6px; }
+    p { font-size: 0.9rem; color: #8c90a4; }
+    
+    #canvas-container {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      border: 1px solid #2a2d3d;
+    }
+    canvas { display: block; background: #1a1c26; cursor: crosshair; }
+    
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-top: 16px;
+      background: #1e202d;
+      padding: 12px 20px;
+      border-radius: 30px;
+      align-items: center;
+      border: 1px solid #313548;
+    }
+    .group { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; }
+    button, select {
+      background: #2b2e40;
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background 0.2s;
+    }
+    button:hover, select:hover { background: #3a3e56; }
+    button.active { background: #6366f1; }
+    .color-picker { display: flex; gap: 6px; }
+    .color-btn {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+    }
+    .color-btn.selected { border-color: #fff; transform: scale(1.1); }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Çiz ve Dinle 🎵</h1>
+    <p>Tuvale çizim yap, ardından Oynat'a basarak sesini dinle.</p>
+  </header>
+
+  <div id="canvas-container">
+    <canvas id="paintCanvas" width="800" height="400"></canvas>
+  </div>
+
+  <div class="toolbar">
+    <div class="group">
+      <button id="playBtn">▶ Oynat</button>
+      <button id="clearBtn">Temizle</button>
+    </div>
+
+    <div class="group">
+      <label>Tema:</label>
+      <select id="themeSelect">
+        <option value="energetic">Enerjik (Pentatonik)</option>
+        <option value="sad">Hüzünlü (Minör)</option>
+        <option value="soft">Soft (Ambient)</option>
+      </select>
+    </div>
+
+    <div class="group">
+      <label>Renk / Tını:</label>
+      <div class="color-picker" id="colorPicker">
+        <div class="color-btn selected" style="background: #38bdf8;" data-color="#38bdf8" data-timbre="sine"></div>
+        <div class="color-btn" style="background: #f43f5e;" data-color="#f43f5e" data-timbre="sawtooth"></div>
+        <div class="color-btn" style="background: #facc15;" data-color="#facc15" data-timbre="triangle"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('paintCanvas');
+    const ctx = canvas.getContext('2d');
+    const playBtn = document.getElementById('playBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const themeSelect = document.getElementById('themeSelect');
+    const colorPicker = document.getElementById('colorPicker');
+
+    let isDrawing = false;
+    let strokes = []; // { points: [{x, y}], color: string, timbre: string }
+    let currentStroke = null;
+    let currentColor = '#38bdf8';
+    let currentTimbre = 'sine';
+    let isPlaying = false;
+    let playheadX = 0;
+    let audioCtx = null;
+
+    // Skalalar (Frekans dizileri - Hz)
+    const SCALES = {
+      energetic: [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25], // C Majör Pentatonik
+      sad: [220.00, 246.94, 261.63, 293.66, 329.63, 349.23, 392.00, 440.00],       // A Doğal Minör
+      soft: [261.63, 329.63, 392.00, 493.88, 523.25, 659.25, 783.99, 987.77]       // C Maj7 aralıkları
+    };
+
+    function initAudio() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+
+    function playTone(freq, type = 'sine') {
+      if (!audioCtx) return;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+      gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.3);
+    }
+
+    // Nota çizgilerini (Porte) çiz
+    function drawGrid() {
+      ctx.strokeStyle = '#232636';
+      ctx.lineWidth = 1;
+      const lines = 8;
+      for (let i = 1; i <= lines; i++) {
+        const y = (canvas.height / (lines + 1)) * i;
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+      }
+    }
+
+    function render() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawGrid();
+
+      // Çizimleri çiz
+      strokes.forEach(stroke => {
+        if (stroke.points.length < 2) return;
+        ctx.beginPath();
+        ctx.strokeStyle = stroke.color;
+        ctx.lineWidth = 4;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.moveTo(stroke.points[0].x, stroke.points[0].y);
+        for (let i = 1; i < stroke.points.length; i++) {
+          ctx.lineTo(stroke.points[i].x, stroke.points[i].y);
+        }
+        ctx.stroke();
+      });
+
+      // Oynatma çizgisi
+      if (isPlaying) {
+        ctx.beginPath();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.moveTo(playheadX, 0);
+        ctx.lineTo(playheadX, canvas.height);
+        ctx.stroke();
+      }
+    }
+
+    canvas.addEventListener('mousedown', (e) => {
+      initAudio();
+      isDrawing = true;
+      const rect = canvas.getBoundingClientRect();
+      const pt = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+      currentStroke = { points: [pt], color: currentColor, timbre: currentTimbre };
+      strokes.push(currentStroke);
+      render();
+    });
+
+    window.addEventListener('mouseup', () => { isDrawing = false; });
+
+    canvas.addEventListener('mousemove', (e) => {
+      if (!isDrawing) return;
+      const rect = canvas.getBoundingClientRect();
+      currentStroke.points.push({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+      render();
+    });
+
+    // Oynatma döngüsü
+    function loop() {
+      if (!isPlaying) return;
+      playheadX += 3; // Hız
+
+      // Çizgiyle kesişen noktaları tara ve ses üret
+      const scale = SCALES[themeSelect.value];
+      strokes.forEach(stroke => {
+        stroke.points.forEach(pt => {
+          if (Math.abs(pt.x - playheadX) < 2) {
+            // Y pozisyonunu notaya çevir (yukarısı tiz, aşağısı bas)
+            const normalizedY = 1 - (pt.y / canvas.height);
+            const noteIndex = Math.floor(normalizedY * scale.length);
+            const clampedIndex = Math.max(0, Math.min(scale.length - 1, noteIndex));
+            playTone(scale[clampedIndex], stroke.timbre);
+          }
+        });
+      });
+
+      if (playheadX > canvas.width) {
+        playheadX = 0; // Başa dön
+      }
+
+      render();
+      requestAnimationFrame(loop);
+    }
+
+    playBtn.addEventListener('click', () => {
+      initAudio();
+      isPlaying = !isPlaying;
+      playBtn.textContent = isPlaying ? '⏹ Durdur' : '▶ Oynat';
+      playBtn.classList.toggle('active', isPlaying);
+      if (isPlaying) loop();
+    });
+
+    clearBtn.addEventListener('click', () => {
+      strokes = [];
+      playheadX = 0;
+      render();
+    });
+
+    // Renk seçimi
+    colorPicker.addEventListener('click', (e) => {
+      if (!e.target.dataset.color) return;
+      document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('selected'));
+      e.target.classList.add('selected');
+      currentColor = e.target.dataset.color;
+      currentTimbre = e.target.dataset.timbre;
+    });
+
+    render();
+  </script>
+</body>
+</html>
