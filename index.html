@@ -3,600 +3,568 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sesli Çizim Stüdyosu 🎨🎶</title>
+  <title>Müzik & Beat Stüdyosu 🎧</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #0f1015;
+      background: #0d0e15;
       color: #f1f2f6;
       display: flex;
       flex-direction: column;
       align-items: center;
       min-height: 100vh;
-      padding: 16px;
+      padding: 20px 10px;
     }
-    header { text-align: center; margin-bottom: 12px; }
-    h1 { font-size: 1.6rem; letter-spacing: -0.5px; }
-    p { font-size: 0.85rem; color: #7e8299; margin-top: 4px; }
+    header { text-align: center; margin-bottom: 20px; }
+    h1 { font-size: 1.8rem; letter-spacing: -0.5px; }
+    p { font-size: 0.85rem; color: #82869e; margin-top: 4px; }
 
-    #studio-wrapper {
-      position: relative;
-      background: #171822;
-      border: 1px solid #2b2d3e;
+    .studio-container {
+      background: #151622;
+      border: 1px solid #282a3c;
       border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 16px 36px rgba(0,0,0,0.45);
-      touch-action: none;
-    }
-    canvas { display: block; background: #14151e; cursor: crosshair; }
-
-    .control-panel {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-top: 14px;
-      background: #171822;
-      border: 1px solid #2b2d3e;
-      border-radius: 16px;
-      padding: 14px 18px;
-      max-width: 900px;
+      padding: 20px;
+      max-width: 960px;
       width: 100%;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.5);
     }
-    .panel-row {
+
+    /* Üst Kontrol Çubuğu */
+    .top-bar {
       display: flex;
       flex-wrap: wrap;
+      justify-content: space-between;
       align-items: center;
       gap: 12px;
-      font-size: 0.85rem;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #232535;
     }
-    .panel-group {
+    .btn-group { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    
+    button {
+      background: #242738;
+      color: #fff;
+      border: 1px solid #34384e;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    button:hover { background: #32364c; border-color: #484d6b; }
+    button.play-active { background: #6366f1; border-color: #818cf8; }
+    button.record-active { background: #ef4444; border-color: #f87171; animation: pulse 1s infinite; }
+
+    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+
+    .control-label {
+      font-size: 0.8rem;
+      color: #9da1b9;
       display: flex;
       align-items: center;
       gap: 6px;
     }
-    .panel-group label {
-      font-weight: 600;
-      color: #a1a5b7;
-      font-size: 0.78rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    button, select {
-      background: #242636;
+    input[type="range"] { accent-color: #6366f1; cursor: pointer; width: 90px; }
+    input[type="text"] {
+      background: #1d1f2d;
+      border: 1px solid #34384e;
       color: #fff;
-      border: 1px solid #33364c;
-      padding: 6px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.82rem;
-      font-weight: 500;
-      transition: all 0.15s ease;
-      display: inline-flex;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+    }
+
+    /* Grid / Sekans Alanı */
+    .sequencer-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+    .track-row {
+      display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 10px;
     }
-    button:hover, select:hover { background: #303348; border-color: #444866; }
-    button.active { background: #6366f1; border-color: #818cf8; }
-    button:disabled { opacity: 0.4; cursor: not-allowed; }
-
-    input[type="range"] {
-      accent-color: #6366f1;
-      height: 4px;
-      cursor: pointer;
+    .track-info {
+      width: 110px;
+      flex-shrink: 0;
+      font-size: 0.82rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
-
-    .palette {
+    .steps-container {
       display: grid;
-      grid-template-columns: repeat(8, auto);
-      gap: 5px;
+      grid-template-columns: repeat(16, 1fr);
+      gap: 6px;
+      flex-grow: 1;
     }
-    .color-swatch {
-      width: 22px;
-      height: 22px;
+    .step-btn {
+      aspect-ratio: 1;
+      min-width: 32px;
+      max-width: 44px;
+      background: #1c1e2b;
+      border: 1px solid #2a2d3e;
       border-radius: 6px;
       cursor: pointer;
-      border: 2px solid transparent;
-      transition: transform 0.1s, border-color 0.1s;
+      transition: background 0.1s, transform 0.05s;
     }
-    .color-swatch:hover { transform: scale(1.15); }
-    .color-swatch.active { border-color: #fff; transform: scale(1.18); box-shadow: 0 0 6px rgba(255,255,255,0.4); }
+    .step-btn:hover { background: #282b3d; }
+    /* Her 4 vuruşta bir ayrım */
+    .steps-container .step-btn:nth-child(4n) { margin-right: 5px; }
 
-    .divider {
-      width: 1px;
-      height: 20px;
-      background: #2b2d3e;
-      margin: 0 4px;
+    /* Aktif Nota Renkleri */
+    .step-btn.active.kick { background: #ef4444; box-shadow: 0 0 8px rgba(239, 68, 68, 0.4); }
+    .step-btn.active.snare { background: #f97316; box-shadow: 0 0 8px rgba(249, 115, 22, 0.4); }
+    .step-btn.active.hihat { background: #eab308; box-shadow: 0 0 8px rgba(234, 179, 8, 0.4); }
+    .step-btn.active.bass { background: #8b5cf6; box-shadow: 0 0 8px rgba(139, 92, 246, 0.4); }
+    .step-btn.active.chords { background: #3b82f6; box-shadow: 0 0 8px rgba(59, 130, 246, 0.4); }
+    .step-btn.active.melody { background: #10b981; box-shadow: 0 0 8px rgba(16, 185, 129, 0.4); }
+
+    /* Çalan Adım Vurgusu */
+    .step-btn.playing {
+      border-color: #ffffff;
+      transform: scale(1.08);
+    }
+
+    /* Kayıtlı Şarkılar Bölümü */
+    .saved-tracks-section {
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid #232535;
+    }
+    .saved-tracks-section h3 {
+      font-size: 0.95rem;
+      margin-bottom: 12px;
+      color: #9da1b9;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .saved-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .saved-card {
+      background: #1b1c28;
+      border: 1px solid #2d3043;
+      padding: 6px 12px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+    }
+    .saved-card .title { cursor: pointer; font-weight: 500; }
+    .saved-card .title:hover { text-decoration: underline; color: #818cf8; }
+    .saved-card .del-btn {
+      color: #ef4444;
+      cursor: pointer;
+      font-weight: bold;
+      padding: 0 4px;
     }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>Sesli Çizim Stüdyosu 🎨🎶</h1>
-    <p>Notalara şekil ver, renklerle tını kat. Çizdikçe melodi oluşsun!</p>
+    <h1>Müzik & Beat Stüdyosu 🎧</h1>
+    <p>Kutucuklara tıkla, ritmini ve arkaplan melodini kendin oluştur!</p>
   </header>
 
-  <div id="studio-wrapper">
-    <canvas id="paintCanvas" width="850" height="420"></canvas>
-  </div>
-
-  <div class="control-panel">
-    <!-- 1. Satır: Oynatma, Geçmiş ve Kaydetme -->
-    <div class="panel-row">
-      <div class="panel-group">
+  <div class="studio-container">
+    <!-- Üst Kontroller -->
+    <div class="top-bar">
+      <div class="btn-group">
         <button id="playBtn">▶ Oynat</button>
         <button id="clearBtn">🗑 Temizle</button>
       </div>
 
-      <div class="divider"></div>
-
-      <div class="panel-group">
-        <button id="undoBtn" title="Geri Al (Ctrl+Z)">↩ Geri</button>
-        <button id="redoBtn" title="İleri Al (Ctrl+Y)">↪ İleri</button>
+      <div class="btn-group">
+        <div class="control-label">
+          <span>Tempo:</span>
+          <input type="range" id="bpmSlider" min="70" max="150" value="105">
+          <span id="bpmVal">105 BPM</span>
+        </div>
       </div>
 
-      <div class="divider"></div>
-
-      <div class="panel-group">
-        <label>Tempo:</label>
-        <input type="range" id="speedSlider" min="1" max="8" value="3" step="0.5" style="width: 70px;">
-      </div>
-
-      <div class="divider"></div>
-
-      <div class="panel-group">
-        <label>Tema:</label>
-        <select id="themeSelect">
-          <option value="energetic">Enerjik (Pentatonik)</option>
-          <option value="sad">Hüzünlü (Melankoli Minör)</option>
-          <option value="soft">Soft & Huzurlu (Maj7 Ambient)</option>
-          <option value="mystic">Mistik (Dorian Gam)</option>
-        </select>
-      </div>
-
-      <div class="divider"></div>
-
-      <div class="panel-group">
-        <button id="saveImgBtn">📸 Resim İndir</button>
+      <div class="btn-group">
+        <input type="text" id="songName" placeholder="Şarkı Adı..." maxlength="20" style="width: 120px;">
+        <button id="saveSongBtn">💾 Siteye Kaydet</button>
+        <button id="exportAudioBtn">📥 WAV İndir</button>
       </div>
     </div>
 
-    <!-- 2. Satır: Çizim Araçları, Şekiller ve Boyut -->
-    <div class="panel-row">
-      <div class="panel-group">
-        <label>Araç:</label>
-        <button class="tool-btn active" data-tool="brush">✏ Fırça</button>
-        <button class="tool-btn" data-tool="eraser">🧹 Silgi</button>
-      </div>
-
-      <div class="divider"></div>
-
-      <div class="panel-group">
-        <label>Şekiller:</label>
-        <button class="tool-btn" data-tool="shape" data-shape="rect">■ Kare</button>
-        <button class="tool-btn" data-tool="shape" data-shape="circle">● Daire</button>
-        <button class="tool-btn" data-tool="shape" data-shape="heart">♥ Kalp</button>
-        <button class="tool-btn" data-tool="shape" data-shape="triangle">▲ Üçgen</button>
-        <button class="tool-btn" data-tool="shape" data-shape="star">★ Yıldız</button>
-      </div>
-
-      <div class="divider"></div>
-
-      <div class="panel-group">
-        <label id="sizeLabel">Boyut: 4px</label>
-        <input type="range" id="brushSize" min="2" max="40" value="4" style="width: 90px;">
-      </div>
+    <!-- Müzik Kanalları (Grid) -->
+    <div class="sequencer-grid" id="grid">
+      <!-- JavaScript otomatik oluşturacak -->
     </div>
 
-    <!-- 3. Satır: Renk Paleti (Açık/Koyu Grupları + Siyah & Beyaz) -->
-    <div class="panel-row">
-      <div class="panel-group">
-        <label>Renk / Enstrüman:</label>
-      </div>
-      <div class="palette" id="palette">
-        <!-- Kırmızı Grubu (Synth Lead) -->
-        <div class="color-swatch" style="background: #ef4444;" data-color="#ef4444" data-timbre="sawtooth" title="Kırmızı (Synth Lead)"></div>
-        <div class="color-swatch" style="background: #f87171;" data-color="#f87171" data-timbre="sawtooth" title="Açık Kırmızı (Parlak Synth)"></div>
-
-        <!-- Turuncu Grubu (Brass / Pirinç) -->
-        <div class="color-swatch" style="background: #f97316;" data-color="#f97316" data-timbre="sawtooth" title="Turuncu (Warm Synth)"></div>
-        <div class="color-swatch" style="background: #fb923c;" data-color="#fb923c" data-timbre="sawtooth" title="Açık Turuncu"></div>
-
-        <!-- Sarı Grubu (Kalimba / Arp) -->
-        <div class="color-swatch" style="background: #eab308;" data-color="#eab308" data-timbre="triangle" title="Sarı (Kalimba/Arp)"></div>
-        <div class="color-swatch" style="background: #fde047;" data-color="#fde047" data-timbre="triangle" title="Açık Sarı (Zil/Tiz Arp)"></div>
-
-        <!-- Yeşil Grubu (Pluck / Gitar) -->
-        <div class="color-swatch" style="background: #22c55e;" data-color="#22c55e" data-timbre="triangle" title="Yeşil (Doğal Tını)"></div>
-        <div class="color-swatch" style="background: #86efac;" data-color="#86efac" data-timbre="triangle" title="Açık Yeşil"></div>
-
-        <!-- Mavi Grubu (Ambient Çan) -->
-        <div class="color-swatch active" style="background: #3b82f6;" data-color="#3b82f6" data-timbre="sine" title="Mavi (Ambient Çan)"></div>
-        <div class="color-swatch" style="background: #93c5fd;" data-color="#93c5fd" data-timbre="sine" title="Açık Mavi (Yumuşak Çan)"></div>
-
-        <!-- Çivit / Lacivert Grubu (Piyano) -->
-        <div class="color-swatch" style="background: #4f46e5;" data-color="#4f46e5" data-timbre="sine" title="Lacivert (Derin Piyano)"></div>
-        <div class="color-swatch" style="background: #a5b4fc;" data-color="#a5b4fc" data-timbre="sine" title="Açık Lacivert"></div>
-
-        <!-- Mor Grubu (Organ / Pad) -->
-        <div class="color-swatch" style="background: #a855f7;" data-color="#a855f7" data-timbre="triangle" title="Mor (Mistisizm Pad)"></div>
-        <div class="color-swatch" style="background: #d8b4fe;" data-color="#d8b4fe" data-timbre="triangle" title="Açık Mor"></div>
-
-        <!-- Siyah ve Beyaz (Bas & Saf Sine) -->
-        <div class="color-swatch" style="background: #ffffff;" data-color="#ffffff" data-timbre="sine" title="Beyaz (Saf Flüt / Tiz Sine)"></div>
-        <div class="color-swatch" style="background: #050505; border: 1px solid #444;" data-color="#050505" data-timbre="square" title="Siyah (Derin Bas)"></div>
+    <!-- Sitede Kayıtlı Olanlar -->
+    <div class="saved-tracks-section">
+      <h3>📁 Sitede Kayıtlı Parçalarım</h3>
+      <div class="saved-list" id="savedList">
+        <span style="font-size:0.8rem; color:#60647c;">Henüz kayıtlı bir parça yok.</span>
       </div>
     </div>
   </div>
 
   <script>
-    const canvas = document.getElementById('paintCanvas');
-    const ctx = canvas.getContext('2d');
-    const playBtn = document.getElementById('playBtn');
-    const clearBtn = document.getElementById('clearBtn');
-    const undoBtn = document.getElementById('undoBtn');
-    const redoBtn = document.getElementById('redoBtn');
-    const saveImgBtn = document.getElementById('saveImgBtn');
-    const brushSizeInput = document.getElementById('brushSize');
-    const sizeLabel = document.getElementById('sizeLabel');
-    const speedSlider = document.getElementById('speedSlider');
-    const themeSelect = document.getElementById('themeSelect');
-    const palette = document.getElementById('palette');
-    const toolBtns = document.querySelectorAll('.tool-btn');
+    // Parça Kanalları & Notalar/Frekanslar (Pentatonik Uyumlu)
+    const TRACKS = [
+      { id: 'kick', name: '🥁 Kick', type: 'drum', freq: 150 },
+      { id: 'snare', name: '💥 Snare', type: 'noise' },
+      { id: 'hihat', name: '✨ Hi-Hat', type: 'noise-short' },
+      { id: 'bass', name: '🎸 Bas', type: 'synth', freq: 65.41 },      // C2
+      { id: 'chords', name: '🎹 Akor/Pluck', type: 'synth', freq: 261.63 }, // C4
+      { id: 'melody', name: '🔔 Melodi', type: 'bell', freq: 523.25 }    // C5
+    ];
 
-    // Durumlar (State)
-    let isDrawing = false;
-    let currentTool = 'brush'; // 'brush', 'eraser', 'shape'
-    let currentShape = null;
-    let currentColor = '#3b82f6';
-    let currentTimbre = 'sine';
-    let currentSize = 4;
-    let strokes = []; // { type, points, color, timbre, size }
-    let undoStack = [];
+    const TOTAL_STEPS = 16;
+    let gridState = {}; // { [trackId]: [bool x 16] }
     let isPlaying = false;
-    let playheadX = 0;
+    let currentStep = 0;
+    let intervalId = null;
     let audioCtx = null;
+    let mediaDest = null;
+    let mediaRecorder = null;
+    let recordedChunks = [];
 
-    // Gam Frekansları (Hz)
-    const SCALES = {
-      energetic: [196.00, 220.00, 261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25], // C Majör Pentatonik Geniş
-      sad: [174.61, 196.00, 220.00, 246.94, 261.63, 293.66, 329.63, 349.23, 392.00, 440.00],       // A Doğal Minör
-      soft: [196.00, 261.63, 329.63, 392.00, 493.88, 523.25, 659.25, 783.99, 987.77],              // Maj7 / Lydian
-      mystic: [196.00, 220.00, 233.08, 261.63, 293.66, 329.63, 349.23, 440.00, 523.25]             // D Dorian
-    };
+    // Durumu Sıfırla
+    function resetGridState() {
+      TRACKS.forEach(t => {
+        gridState[t.id] = new Array(TOTAL_STEPS).fill(false);
+      });
+    }
+    resetGridState();
 
-    function initAudio() {
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    // Ses Motoru
+    function getAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        mediaDest = audioCtx.createMediaStreamDestination();
+      }
       if (audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
     }
 
-    function playTone(freq, type = 'sine') {
-      if (!audioCtx) return;
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = type;
-      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-
-      const decay = (type === 'sawtooth') ? 0.2 : 0.4;
-      const volume = (type === 'sawtooth' || type === 'square') ? 0.08 : 0.14;
-
-      gain.gain.setValueAtTime(volume, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + decay);
-
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + decay);
+    function routeToOutput(node) {
+      node.connect(audioCtx.destination);
+      if (mediaDest) node.connect(mediaDest);
     }
 
-    function getCanvasCoords(e) {
-      const rect = canvas.getBoundingClientRect();
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-      return {
-        x: Math.round((clientX - rect.left) * (canvas.width / rect.width)),
-        y: Math.round((clientY - rect.top) * (canvas.height / rect.height))
-      };
-    }
+    // Enstrüman Ses Sentezleyicileri
+    function playSound(track) {
+      const ctx = getAudioContext();
+      const now = ctx.currentTime;
 
-    // Şekil Koordinat Jeneratörleri
-    function generateShapePoints(type, cx, cy, radius = 35) {
-      const points = [];
-      const steps = 40;
-      if (type === 'circle') {
-        for (let i = 0; i <= steps; i++) {
-          const a = (i / steps) * Math.PI * 2;
-          points.push({ x: cx + Math.cos(a) * radius, y: cy + Math.sin(a) * radius });
-        }
-      } else if (type === 'rect') {
-        const r = radius * 0.9;
-        const corners = [
-          {x: cx - r, y: cy - r}, {x: cx + r, y: cy - r},
-          {x: cx + r, y: cy + r}, {x: cx - r, y: cy + r},
-          {x: cx - r, y: cy - r}
-        ];
-        for (let i = 0; i < corners.length - 1; i++) {
-          for (let step = 0; step < 10; step++) {
-            points.push({
-              x: corners[i].x + (corners[i+1].x - corners[i].x) * (step / 10),
-              y: corners[i].y + (corners[i+1].y - corners[i].y) * (step / 10)
-            });
-          }
-        }
-      } else if (type === 'triangle') {
-        const corners = [
-          { x: cx, y: cy - radius },
-          { x: cx + radius * 0.866, y: cy + radius * 0.5 },
-          { x: cx - radius * 0.866, y: cy + radius * 0.5 },
-          { x: cx, y: cy - radius }
-        ];
-        for (let i = 0; i < corners.length - 1; i++) {
-          for (let step = 0; step < 12; step++) {
-            points.push({
-              x: corners[i].x + (corners[i+1].x - corners[i].x) * (step / 12),
-              y: corners[i].y + (corners[i+1].y - corners[i].y) * (step / 12)
-            });
-          }
-        }
-      } else if (type === 'heart') {
-        for (let i = 0; i <= steps; i++) {
-          const t = (i / steps) * Math.PI * 2;
-          const hx = 16 * Math.pow(Math.sin(t), 3);
-          const hy = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
-          points.push({ x: cx + hx * (radius / 16), y: cy + hy * (radius / 16) });
-        }
-      } else if (type === 'star') {
-        const outer = radius;
-        const inner = radius * 0.45;
-        const starCorners = [];
-        for (let i = 0; i < 10; i++) {
-          const r = (i % 2 === 0) ? outer : inner;
-          const a = (i * Math.PI / 5) - Math.PI / 2;
-          starCorners.push({ x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r });
-        }
-        starCorners.push(starCorners[0]);
-        for (let i = 0; i < starCorners.length - 1; i++) {
-          for (let step = 0; step < 6; step++) {
-            points.push({
-              x: starCorners[i].x + (starCorners[i+1].x - starCorners[i].x) * (step / 6),
-              y: starCorners[i].y + (starCorners[i+1].y - starCorners[i].y) * (step / 6)
-            });
-          }
-        }
+      if (track.id === 'kick') {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.frequency.setValueAtTime(140, now);
+        osc.frequency.exponentialRampToValueAtTime(0.01, now + 0.35);
+        gain.gain.setValueAtTime(1, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+        osc.connect(gain);
+        routeToOutput(gain);
+        osc.start(now);
+        osc.stop(now + 0.35);
+      } 
+      else if (track.id === 'snare') {
+        // Beyaz Gürültü Trampet
+        const bufferSize = ctx.sampleRate * 0.15;
+        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+
+        const noise = ctx.createBufferSource();
+        noise.buffer = buffer;
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'highpass';
+        filter.frequency.value = 1000;
+
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0.7, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+
+        noise.connect(filter);
+        filter.connect(gain);
+        routeToOutput(gain);
+        noise.start(now);
+      } 
+      else if (track.id === 'hihat') {
+        const bufferSize = ctx.sampleRate * 0.04;
+        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+
+        const noise = ctx.createBufferSource();
+        noise.buffer = buffer;
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'highpass';
+        filter.frequency.value = 5000;
+
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.04);
+
+        noise.connect(filter);
+        filter.connect(gain);
+        routeToOutput(gain);
+        noise.start(now);
+      } 
+      else if (track.id === 'bass') {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(track.freq, now);
+
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(260, now);
+
+        gain.gain.setValueAtTime(0.4, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        routeToOutput(gain);
+        osc.start(now);
+        osc.stop(now + 0.4);
+      } 
+      else if (track.id === 'chords') {
+        // Yumuşak Lo-Fi Pluck
+        [0, 4, 7].forEach((semi, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'triangle';
+          const f = track.freq * Math.pow(2, semi / 12);
+          osc.frequency.setValueAtTime(f, now);
+
+          gain.gain.setValueAtTime(0.12, now + (idx * 0.015));
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+
+          osc.connect(gain);
+          routeToOutput(gain);
+          osc.start(now);
+          osc.stop(now + 0.5);
+        });
+      } 
+      else if (track.id === 'melody') {
+        // Çan / Sine
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(track.freq, now);
+
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+
+        osc.connect(gain);
+        routeToOutput(gain);
+        osc.start(now);
+        osc.stop(now + 0.6);
       }
-      return points;
     }
 
-    // Nota Çizgileri (Porte) Çizimi
-    function drawPorte() {
-      ctx.strokeStyle = '#202231';
-      ctx.lineWidth = 1;
-      const count = 10;
-      for (let i = 1; i <= count; i++) {
-        const y = (canvas.height / (count + 1)) * i;
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(canvas.width, y);
-        ctx.stroke();
-      }
-    }
+    // Grid'i HTML Olarak İnşa Et
+    const gridEl = document.getElementById('grid');
+    function buildGrid() {
+      gridEl.innerHTML = '';
+      TRACKS.forEach(track => {
+        const row = document.createElement('div');
+        row.className = 'track-row';
 
-    function render() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      drawPorte();
+        const info = document.createElement('div');
+        info.className = 'track-info';
+        info.textContent = track.name;
+        row.appendChild(info);
 
-      // Tüm vuruşları çiz
-      strokes.forEach(s => {
-        if (!s.points || s.points.length === 0) return;
-        ctx.beginPath();
-        ctx.strokeStyle = s.color;
-        ctx.lineWidth = s.size;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
+        const stepsCont = document.createElement('div');
+        stepsCont.className = 'steps-container';
 
-        ctx.moveTo(s.points[0].x, s.points[0].y);
-        for (let i = 1; i < s.points.length; i++) {
-          ctx.lineTo(s.points[i].x, s.points[i].y);
+        for (let i = 0; i < TOTAL_STEPS; i++) {
+          const btn = document.createElement('div');
+          btn.className = `step-btn ${track.id}`;
+          if (gridState[track.id][i]) btn.classList.add('active');
+
+          btn.addEventListener('click', () => {
+            getAudioContext();
+            gridState[track.id][i] = !gridState[track.id][i];
+            btn.classList.toggle('active', gridState[track.id][i]);
+            if (gridState[track.id][i]) playSound(track);
+          });
+
+          stepsCont.appendChild(btn);
         }
-        ctx.stroke();
+
+        row.appendChild(stepsCont);
+        gridEl.appendChild(row);
+      });
+    }
+
+    // Adım Adım İlerleme (Playhead)
+    function step() {
+      // Önceki adımların vurgusunu kaldır
+      document.querySelectorAll('.step-btn.playing').forEach(el => el.classList.remove('playing'));
+
+      // Şimdiki adımı vurgula ve çalanları tetikle
+      TRACKS.forEach((track, trackIdx) => {
+        const row = gridEl.children[trackIdx];
+        const stepBtn = row.querySelectorAll('.step-btn')[currentStep];
+        stepBtn.classList.add('playing');
+
+        if (gridState[track.id][currentStep]) {
+          playSound(track);
+        }
       });
 
-      // Oynatma çizgisi
+      currentStep = (currentStep + 1) % TOTAL_STEPS;
+    }
+
+    function startPlayback() {
+      getAudioContext();
+      isPlaying = true;
+      playBtn.textContent = '⏹ Durdur';
+      playBtn.classList.add('play-active');
+
+      const bpm = parseInt(document.getElementById('bpmSlider').value);
+      const intervalMs = (60 / bpm / 4) * 1000; // 16'lık nota aralığı
+      intervalId = setInterval(step, intervalMs);
+    }
+
+    function stopPlayback() {
+      isPlaying = false;
+      playBtn.textContent = '▶ Oynat';
+      playBtn.classList.remove('play-active');
+      clearInterval(intervalId);
+      currentStep = 0;
+      document.querySelectorAll('.step-btn.playing').forEach(el => el.classList.remove('playing'));
+    }
+
+    // Buton Dinleyicileri
+    const playBtn = document.getElementById('playBtn');
+    playBtn.addEventListener('click', () => {
+      if (isPlaying) stopPlayback();
+      else startPlayback();
+    });
+
+    document.getElementById('bpmSlider').addEventListener('input', (e) => {
+      document.getElementById('bpmVal').textContent = `${e.target.value} BPM`;
       if (isPlaying) {
-        ctx.beginPath();
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 2.5;
-        ctx.shadowColor = '#6366f1';
-        ctx.shadowBlur = 8;
-        ctx.moveTo(playheadX, 0);
-        ctx.lineTo(playheadX, canvas.height);
-        ctx.stroke();
-        ctx.shadowBlur = 0;
+        clearInterval(intervalId);
+        const bpm = parseInt(e.target.value);
+        intervalId = setInterval(step, (60 / bpm / 4) * 1000);
       }
-    }
+    });
 
-    function pushHistory(newStroke) {
-      strokes.push(newStroke);
-      undoStack = []; // Yeni işlemde ileri al geçmişini temizle
-      updateButtons();
-      render();
-    }
+    document.getElementById('clearBtn').addEventListener('click', () => {
+      resetGridState();
+      buildGrid();
+    });
 
-    function updateButtons() {
-      undoBtn.disabled = strokes.length === 0;
-      redoBtn.disabled = undoStack.length === 0;
-    }
+    // Site İçi Kaydetme (LocalStorage)
+    function renderSavedList() {
+      const listEl = document.getElementById('savedList');
+      const saved = JSON.parse(localStorage.getItem('my_beats') || '{}');
+      const keys = Object.keys(saved);
 
-    // Çizim Olayları (Mouse & Touch)
-    function onStart(e) {
-      initAudio();
-      const pt = getCanvasCoords(e);
-      isDrawing = true;
-
-      if (currentTool === 'shape') {
-        const pts = generateShapePoints(currentShape, pt.x, pt.y, currentSize * 6);
-        pushHistory({
-          type: 'shape',
-          points: pts,
-          color: currentColor,
-          timbre: currentTimbre,
-          size: currentSize
-        });
-        isDrawing = false;
+      if (keys.length === 0) {
+        listEl.innerHTML = '<span style="font-size:0.8rem; color:#60647c;">Henüz kayıtlı bir parça yok.</span>';
         return;
       }
 
-      const activeColor = (currentTool === 'eraser') ? '#14151e' : currentColor;
-      const strokeItem = {
-        type: currentTool,
-        points: [pt],
-        color: activeColor,
-        timbre: currentTimbre,
-        size: currentSize
-      };
-      strokes.push(strokeItem);
-      undoStack = [];
-      updateButtons();
-      render();
-    }
+      listEl.innerHTML = '';
+      keys.forEach(name => {
+        const card = document.createElement('div');
+        card.className = 'saved-card';
 
-    function onMove(e) {
-      if (!isDrawing || currentTool === 'shape') return;
-      const pt = getCanvasCoords(e);
-      const currentStroke = strokes[strokes.length - 1];
-      if (currentStroke) {
-        currentStroke.points.push(pt);
-        render();
-      }
-    }
-
-    function onEnd() {
-      isDrawing = false;
-    }
-
-    canvas.addEventListener('mousedown', onStart);
-    window.addEventListener('mousemove', onMove);
-    window.addEventListener('mouseup', onEnd);
-
-    canvas.addEventListener('touchstart', (e) => { e.preventDefault(); onStart(e); });
-    window.addEventListener('touchmove', (e) => { onMove(e); });
-    window.addEventListener('touchend', onEnd);
-
-    // Geri Al & İleri Al
-    undoBtn.addEventListener('click', () => {
-      if (strokes.length > 0) {
-        undoStack.push(strokes.pop());
-        updateButtons();
-        render();
-      }
-    });
-
-    redoBtn.addEventListener('click', () => {
-      if (undoStack.length > 0) {
-        strokes.push(undoStack.pop());
-        updateButtons();
-        render();
-      }
-    });
-
-    window.addEventListener('keydown', (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
-        e.preventDefault();
-        undoBtn.click();
-      } else if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.shiftKey && e.key === 'Z'))) {
-        e.preventDefault();
-        redoBtn.click();
-      }
-    });
-
-    // Sesli Oynatma Döngüsü
-    function loop() {
-      if (!isPlaying) return;
-      const stepSpeed = parseFloat(speedSlider.value);
-      playheadX += stepSpeed;
-
-      const scale = SCALES[themeSelect.value];
-      strokes.forEach(stroke => {
-        if (stroke.color === '#14151e') return; // Silgi izlerini çalma
-        stroke.points.forEach(pt => {
-          if (Math.abs(pt.x - playheadX) < Math.max(2, stepSpeed / 1.5)) {
-            const normalizedY = 1 - (pt.y / canvas.height);
-            const noteIdx = Math.max(0, Math.min(scale.length - 1, Math.floor(normalizedY * scale.length)));
-            playTone(scale[noteIdx], stroke.timbre);
-          }
+        const title = document.createElement('span');
+        title.className = 'title';
+        title.textContent = `🎵 ${name}`;
+        title.addEventListener('click', () => {
+          gridState = JSON.parse(JSON.stringify(saved[name].state));
+          document.getElementById('bpmSlider').value = saved[name].bpm || 105;
+          document.getElementById('bpmVal').textContent = `${saved[name].bpm || 105} BPM`;
+          buildGrid();
         });
+
+        const del = document.createElement('span');
+        del.className = 'del-btn';
+        del.textContent = '✕';
+        del.addEventListener('click', () => {
+          delete saved[name];
+          localStorage.setItem('my_beats', JSON.stringify(saved));
+          renderSavedList();
+        });
+
+        card.appendChild(title);
+        card.appendChild(del);
+        listEl.appendChild(card);
       });
-
-      if (playheadX > canvas.width) {
-        playheadX = 0;
-      }
-
-      render();
-      requestAnimationFrame(loop);
     }
 
-    playBtn.addEventListener('click', () => {
-      initAudio();
-      isPlaying = !isPlaying;
-      playBtn.textContent = isPlaying ? '⏹ Durdur' : '▶ Oynat';
-      playBtn.classList.toggle('active', isPlaying);
-      if (isPlaying) loop();
+    document.getElementById('saveSongBtn').addEventListener('click', () => {
+      const nameInput = document.getElementById('songName');
+      const name = nameInput.value.trim() || `Beat #${Math.floor(Math.random() * 900 + 100)}`;
+      const saved = JSON.parse(localStorage.getItem('my_beats') || '{}');
+      saved[name] = {
+        state: gridState,
+        bpm: document.getElementById('bpmSlider').value
+      };
+      localStorage.setItem('my_beats', JSON.stringify(saved));
+      nameInput.value = '';
+      renderSavedList();
+      alert(`"${name}" site içine kaydedildi!`);
     });
 
-    clearBtn.addEventListener('click', () => {
-      if (strokes.length > 0) {
-        undoStack.push(...strokes);
-        strokes = [];
-        playheadX = 0;
-        updateButtons();
-        render();
-      }
+    // 1 Döngü Kaydedip Bilgisayara İndirme (Audio Export)
+    const exportBtn = document.getElementById('exportAudioBtn');
+    exportBtn.addEventListener('click', () => {
+      getAudioContext();
+      if (!isPlaying) startPlayback();
+
+      recordedChunks = [];
+      mediaRecorder = new MediaRecorder(mediaDest.stream);
+      mediaRecorder.ondataavailable = (e) => recordedChunks.push(e.data);
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(recordedChunks, { type: 'audio/webm' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'muzigim.webm';
+        a.click();
+        exportBtn.textContent = '📥 WAV İndir';
+        exportBtn.classList.remove('record-active');
+      };
+
+      mediaRecorder.start();
+      exportBtn.textContent = '🔴 Kaydediliyor...';
+      exportBtn.classList.add('record-active');
+
+      // 1 tam döngü (16 adım) bittiğinde otomatik durdur ve indir
+      const bpm = parseInt(document.getElementById('bpmSlider').value);
+      const totalLoopTime = ((60 / bpm / 4) * 16) * 1000;
+      setTimeout(() => {
+        if (mediaRecorder && mediaRecorder.state === 'recording') {
+          mediaRecorder.stop();
+        }
+      }, totalLoopTime);
     });
 
-    // Fırça Boyutu
-    brushSizeInput.addEventListener('input', (e) => {
-      currentSize = parseInt(e.target.value);
-      sizeLabel.textContent = `Boyut: ${currentSize}px`;
-    });
-
-    // Araç Seçimi
-    toolBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        toolBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentTool = btn.dataset.tool;
-        currentShape = btn.dataset.shape || null;
-      });
-    });
-
-    // Renk Seçimi
-    palette.addEventListener('click', (e) => {
-      const swatch = e.target.closest('.color-swatch');
-      if (!swatch) return;
-      document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
-      swatch.classList.add('active');
-      currentColor = swatch.dataset.color;
-      currentTimbre = swatch.dataset.timbre;
-      
-      // Renk seçildiğinde silgiden fırçaya geri dön
-      if (currentTool === 'eraser') {
-        const brushBtn = document.querySelector('[data-tool="brush"]');
-        brushBtn.click();
-      }
-    });
-
-    // Resmi PNG Olarak İndir
-    saveImgBtn.addEventListener('click', () => {
-      const link = document.createElement('a');
-      link.download = 'muzikli-resmim.png';
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-    });
-
-    updateButtons();
-    render();
+    // Başlangıç Kurulumu
+    buildGrid();
+    renderSavedList();
   </script>
 </body>
 </html>
