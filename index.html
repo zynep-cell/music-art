@@ -3,162 +3,174 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Müzik & Beat Stüdyosu 🎧</title>
+  <title>Ritim & Dans Beat Stüdyosu 🥁💃</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #0d0e15;
-      color: #f1f2f6;
+      background: #0c0d14;
+      color: #f3f4f6;
       display: flex;
       flex-direction: column;
       align-items: center;
       min-height: 100vh;
-      padding: 20px 10px;
+      padding: 18px 10px;
     }
-    header { text-align: center; margin-bottom: 20px; }
-    h1 { font-size: 1.8rem; letter-spacing: -0.5px; }
-    p { font-size: 0.85rem; color: #82869e; margin-top: 4px; }
+    header { text-align: center; margin-bottom: 16px; }
+    h1 { font-size: 1.7rem; letter-spacing: -0.5px; }
+    p { font-size: 0.85rem; color: #8287a2; margin-top: 4px; }
 
     .studio-container {
-      background: #151622;
-      border: 1px solid #282a3c;
+      background: #141624;
+      border: 1px solid #282a40;
       border-radius: 16px;
       padding: 20px;
-      max-width: 960px;
+      max-width: 980px;
       width: 100%;
-      box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+      box-shadow: 0 16px 45px rgba(0,0,0,0.55);
     }
 
-    /* Üst Kontrol Çubuğu */
+    /* Üst Kontrol Paneli */
     .top-bar {
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
       gap: 12px;
-      margin-bottom: 20px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid #232535;
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid #23253a;
     }
     .btn-group { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     
-    button {
-      background: #242738;
+    button, select {
+      background: #23263a;
       color: #fff;
-      border: 1px solid #34384e;
-      padding: 8px 14px;
+      border: 1px solid #363a56;
+      padding: 7px 13px;
       border-radius: 8px;
       cursor: pointer;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: 600;
       transition: all 0.15s ease;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
     }
-    button:hover { background: #32364c; border-color: #484d6b; }
+    button:hover, select:hover { background: #313550; border-color: #4b5278; }
     button.play-active { background: #6366f1; border-color: #818cf8; }
     button.record-active { background: #ef4444; border-color: #f87171; animation: pulse 1s infinite; }
 
     @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
 
     .control-label {
-      font-size: 0.8rem;
-      color: #9da1b9;
+      font-size: 0.78rem;
+      color: #9ea3bf;
       display: flex;
       align-items: center;
       gap: 6px;
+      font-weight: 600;
     }
-    input[type="range"] { accent-color: #6366f1; cursor: pointer; width: 90px; }
+    input[type="range"] { accent-color: #6366f1; cursor: pointer; width: 85px; }
     input[type="text"] {
-      background: #1d1f2d;
-      border: 1px solid #34384e;
+      background: #1d2033;
+      border: 1px solid #363a56;
       color: #fff;
       padding: 6px 10px;
       border-radius: 6px;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
     }
 
-    /* Grid / Sekans Alanı */
+    /* Grid Alanı */
     .sequencer-grid {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
       overflow-x: auto;
       padding-bottom: 8px;
     }
     .track-row {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
     .track-info {
-      width: 110px;
+      width: 140px;
       flex-shrink: 0;
       font-size: 0.82rem;
       font-weight: 600;
       display: flex;
       align-items: center;
-      gap: 6px;
+      justify-content: space-between;
+      padding-right: 6px;
     }
+    .mute-btn {
+      padding: 2px 7px;
+      font-size: 0.72rem;
+      border-radius: 4px;
+      background: #2a2d42;
+      border: 1px solid #3c405e;
+      color: #a5abbf;
+    }
+    .mute-btn.muted {
+      background: #ef4444;
+      color: #fff;
+      border-color: #f87171;
+    }
+
     .steps-container {
       display: grid;
       grid-template-columns: repeat(16, 1fr);
-      gap: 6px;
+      gap: 5px;
       flex-grow: 1;
     }
     .step-btn {
       aspect-ratio: 1;
-      min-width: 32px;
-      max-width: 44px;
-      background: #1c1e2b;
-      border: 1px solid #2a2d3e;
+      min-width: 30px;
+      max-width: 42px;
+      background: #1a1c2a;
+      border: 1px solid #282b3e;
       border-radius: 6px;
       cursor: pointer;
       transition: background 0.1s, transform 0.05s;
     }
-    .step-btn:hover { background: #282b3d; }
-    /* Her 4 vuruşta bir ayrım */
+    .step-btn:hover { background: #26293f; }
     .steps-container .step-btn:nth-child(4n) { margin-right: 5px; }
 
-    /* Aktif Nota Renkleri */
-    .step-btn.active.kick { background: #ef4444; box-shadow: 0 0 8px rgba(239, 68, 68, 0.4); }
-    .step-btn.active.snare { background: #f97316; box-shadow: 0 0 8px rgba(249, 115, 22, 0.4); }
-    .step-btn.active.hihat { background: #eab308; box-shadow: 0 0 8px rgba(234, 179, 8, 0.4); }
-    .step-btn.active.bass { background: #8b5cf6; box-shadow: 0 0 8px rgba(139, 92, 246, 0.4); }
-    .step-btn.active.chords { background: #3b82f6; box-shadow: 0 0 8px rgba(59, 130, 246, 0.4); }
-    .step-btn.active.melody { background: #10b981; box-shadow: 0 0 8px rgba(16, 185, 129, 0.4); }
+    /* Kanal Renkleri */
+    .step-btn.active.dum { background: #f97316; box-shadow: 0 0 8px rgba(249, 115, 22, 0.45); }
+    .step-btn.active.tek { background: #facc15; box-shadow: 0 0 8px rgba(250, 204, 21, 0.45); }
+    .step-btn.active.shaker { background: #10b981; box-shadow: 0 0 8px rgba(16, 185, 129, 0.45); }
+    .step-btn.active.kick { background: #ef4444; box-shadow: 0 0 8px rgba(239, 68, 68, 0.45); }
+    .step-btn.active.snare { background: #ec4899; box-shadow: 0 0 8px rgba(236, 72, 153, 0.45); }
+    .step-btn.active.bass { background: #8b5cf6; box-shadow: 0 0 8px rgba(139, 92, 246, 0.45); }
+    .step-btn.active.lead { background: #3b82f6; box-shadow: 0 0 8px rgba(59, 130, 246, 0.45); }
 
-    /* Çalan Adım Vurgusu */
+    /* Playhead Çalma Animasyonu */
     .step-btn.playing {
       border-color: #ffffff;
-      transform: scale(1.08);
+      transform: scale(1.1);
     }
 
-    /* Kayıtlı Şarkılar Bölümü */
+    /* Kayıtlı Listesi */
     .saved-tracks-section {
-      margin-top: 24px;
-      padding-top: 16px;
-      border-top: 1px solid #232535;
+      margin-top: 20px;
+      padding-top: 14px;
+      border-top: 1px solid #23253a;
     }
     .saved-tracks-section h3 {
-      font-size: 0.95rem;
-      margin-bottom: 12px;
-      color: #9da1b9;
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+      color: #9ea3bf;
       display: flex;
       align-items: center;
       gap: 6px;
     }
-    .saved-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
+    .saved-list { display: flex; flex-wrap: wrap; gap: 8px; }
     .saved-card {
-      background: #1b1c28;
-      border: 1px solid #2d3043;
-      padding: 6px 12px;
+      background: #1a1c2a;
+      border: 1px solid #2d3148;
+      padding: 5px 12px;
       border-radius: 8px;
       display: flex;
       align-items: center;
@@ -167,19 +179,14 @@
     }
     .saved-card .title { cursor: pointer; font-weight: 500; }
     .saved-card .title:hover { text-decoration: underline; color: #818cf8; }
-    .saved-card .del-btn {
-      color: #ef4444;
-      cursor: pointer;
-      font-weight: bold;
-      padding: 0 4px;
-    }
+    .saved-card .del-btn { color: #ef4444; cursor: pointer; font-weight: bold; }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>Müzik & Beat Stüdyosu 🎧</h1>
-    <p>Kutucuklara tıkla, ritmini ve arkaplan melodini kendin oluştur!</p>
+    <h1>Ritim & Dans Beat Stüdyosu 🥁💃</h1>
+    <p>Darbuka ritimleri, dans synthleri ve hazır şablonlarla kendi müziğini yarat!</p>
   </header>
 
   <div class="studio-container">
@@ -191,24 +198,42 @@
       </div>
 
       <div class="btn-group">
+        <label class="control-label">Hazır Beat:</label>
+        <select id="presetSelect">
+          <option value="" disabled selected>⚡ Şablon Seç...</option>
+          <option value="oriental">💃 Oryantal / Dans (Darbuka)</option>
+          <option value="club">🔥 Enerjik Kulüp / EDM</option>
+          <option value="trap">🕶 Trap / Hip-Hop</option>
+          <option value="lofi">☕ Lo-Fi Chill</option>
+        </select>
+      </div>
+
+      <div class="btn-group">
+        <label class="control-label">Makam / Mod:</label>
+        <select id="modeSelect">
+          <option value="hicaz">🌴 Hicaz / Egzotik</option>
+          <option value="clubDance">⚡ Dans & Enerji</option>
+          <option value="harmonic">🌙 Gece Minör</option>
+        </select>
+      </div>
+
+      <div class="btn-group">
         <div class="control-label">
           <span>Tempo:</span>
-          <input type="range" id="bpmSlider" min="70" max="150" value="105">
-          <span id="bpmVal">105 BPM</span>
+          <input type="range" id="bpmSlider" min="70" max="155" value="112">
+          <span id="bpmVal">112 BPM</span>
         </div>
       </div>
 
       <div class="btn-group">
-        <input type="text" id="songName" placeholder="Şarkı Adı..." maxlength="20" style="width: 120px;">
-        <button id="saveSongBtn">💾 Siteye Kaydet</button>
+        <input type="text" id="songName" placeholder="Şarkı Adı..." maxlength="18" style="width: 110px;">
+        <button id="saveSongBtn">💾 Kaydet</button>
         <button id="exportAudioBtn">📥 WAV İndir</button>
       </div>
     </div>
 
-    <!-- Müzik Kanalları (Grid) -->
-    <div class="sequencer-grid" id="grid">
-      <!-- JavaScript otomatik oluşturacak -->
-    </div>
+    <!-- Müzik Kanalları -->
+    <div class="sequencer-grid" id="grid"></div>
 
     <!-- Sitede Kayıtlı Olanlar -->
     <div class="saved-tracks-section">
@@ -220,18 +245,27 @@
   </div>
 
   <script>
-    // Parça Kanalları & Notalar/Frekanslar (Pentatonik Uyumlu)
+    // Enstrüman Kanalları
     const TRACKS = [
-      { id: 'kick', name: '🥁 Kick', type: 'drum', freq: 150 },
-      { id: 'snare', name: '💥 Snare', type: 'noise' },
-      { id: 'hihat', name: '✨ Hi-Hat', type: 'noise-short' },
-      { id: 'bass', name: '🎸 Bas', type: 'synth', freq: 65.41 },      // C2
-      { id: 'chords', name: '🎹 Akor/Pluck', type: 'synth', freq: 261.63 }, // C4
-      { id: 'melody', name: '🔔 Melodi', type: 'bell', freq: 523.25 }    // C5
+      { id: 'dum', name: '🪘 Darbuka (Düm)', baseFreq: 110 },
+      { id: 'tek', name: '🥢 Darbuka (Tek)', baseFreq: 850 },
+      { id: 'shaker', name: '🔔 Zil / Ritim', baseFreq: 0 },
+      { id: 'kick', name: '🥁 Kulüp Kick', baseFreq: 160 },
+      { id: 'snare', name: '💥 Trampet / Alkış', baseFreq: 0 },
+      { id: 'bass', name: '🎸 Dans Bas', baseFreq: 65.41 },
+      { id: 'lead', name: '🎷 Melodi / Synth', baseFreq: 261.63 }
     ];
 
+    // Modlar ve Notalar (Frekans dizileri)
+    const MODES = {
+      hicaz: [261.63, 277.18, 329.63, 349.23, 392.00, 415.30, 493.88, 523.25], // Hicaz karakterli dizi
+      clubDance: [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25], // Majör Pentatonik Enerji
+      harmonic: [220.00, 246.94, 261.63, 293.66, 329.63, 349.23, 415.30, 440.00]  // A Harmonik Minör
+    };
+
     const TOTAL_STEPS = 16;
-    let gridState = {}; // { [trackId]: [bool x 16] }
+    let gridState = {};
+    let muteState = {};
     let isPlaying = false;
     let currentStep = 0;
     let intervalId = null;
@@ -240,15 +274,14 @@
     let mediaRecorder = null;
     let recordedChunks = [];
 
-    // Durumu Sıfırla
     function resetGridState() {
       TRACKS.forEach(t => {
         gridState[t.id] = new Array(TOTAL_STEPS).fill(false);
+        if (muteState[t.id] === undefined) muteState[t.id] = false;
       });
     }
     resetGridState();
 
-    // Ses Motoru
     function getAudioContext() {
       if (!audioCtx) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -263,121 +296,132 @@
       if (mediaDest) node.connect(mediaDest);
     }
 
-    // Enstrüman Ses Sentezleyicileri
-    function playSound(track) {
+    // Ses Sentezleyicileri
+    function playInstrument(track, stepIdx) {
+      if (muteState[track.id]) return;
       const ctx = getAudioContext();
       const now = ctx.currentTime;
+      const currentMode = MODES[document.getElementById('modeSelect').value];
 
-      if (track.id === 'kick') {
+      if (track.id === 'dum') {
+        // Darbuka Düm: Derin rezonanslı bas ton
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
-        osc.frequency.setValueAtTime(140, now);
-        osc.frequency.exponentialRampToValueAtTime(0.01, now + 0.35);
-        gain.gain.setValueAtTime(1, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+        osc.frequency.setValueAtTime(120, now);
+        osc.frequency.exponentialRampToValueAtTime(55, now + 0.18);
+        gain.gain.setValueAtTime(1.1, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
         osc.connect(gain);
         routeToOutput(gain);
         osc.start(now);
-        osc.stop(now + 0.35);
-      } 
-      else if (track.id === 'snare') {
-        // Beyaz Gürültü Trampet
-        const bufferSize = ctx.sampleRate * 0.15;
+        osc.stop(now + 0.22);
+      }
+      else if (track.id === 'tek') {
+        // Darbuka Tek: Metalik gövde çıtlatması
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(850, now);
+        osc.frequency.exponentialRampToValueAtTime(300, now + 0.08);
+        gain.gain.setValueAtTime(0.8, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+        osc.connect(gain);
+        routeToOutput(gain);
+        osc.start(now);
+        osc.stop(now + 0.08);
+      }
+      else if (track.id === 'shaker') {
+        // Zil / Çalkalama
+        const bufferSize = ctx.sampleRate * 0.05;
         const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
         const data = buffer.getChannelData(0);
         for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
-
         const noise = ctx.createBufferSource();
         noise.buffer = buffer;
         const filter = ctx.createBiquadFilter();
         filter.type = 'highpass';
-        filter.frequency.value = 1000;
-
+        filter.frequency.value = 7000;
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0.35, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+        noise.connect(filter);
+        filter.connect(gain);
+        routeToOutput(gain);
+        noise.start(now);
+      }
+      else if (track.id === 'kick') {
+        // Dans / EDM Kick
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.frequency.setValueAtTime(160, now);
+        osc.frequency.exponentialRampToValueAtTime(35, now + 0.3);
+        gain.gain.setValueAtTime(1, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+        osc.connect(gain);
+        routeToOutput(gain);
+        osc.start(now);
+        osc.stop(now + 0.3);
+      }
+      else if (track.id === 'snare') {
+        // Trampet / Alkış
+        const bufferSize = ctx.sampleRate * 0.14;
+        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+        const noise = ctx.createBufferSource();
+        noise.buffer = buffer;
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.value = 1800;
         const gain = ctx.createGain();
         gain.gain.setValueAtTime(0.7, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
-
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.14);
         noise.connect(filter);
         filter.connect(gain);
         routeToOutput(gain);
         noise.start(now);
-      } 
-      else if (track.id === 'hihat') {
-        const bufferSize = ctx.sampleRate * 0.04;
-        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-        const data = buffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
-
-        const noise = ctx.createBufferSource();
-        noise.buffer = buffer;
-        const filter = ctx.createBiquadFilter();
-        filter.type = 'highpass';
-        filter.frequency.value = 5000;
-
-        const gain = ctx.createGain();
-        gain.gain.setValueAtTime(0.3, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.04);
-
-        noise.connect(filter);
-        filter.connect(gain);
-        routeToOutput(gain);
-        noise.start(now);
-      } 
+      }
       else if (track.id === 'bass') {
+        // Synth Bas
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(track.freq, now);
-
+        const noteIdx = (stepIdx % 4 === 0) ? 0 : 2;
+        const f = currentMode[noteIdx] / 4;
+        osc.frequency.setValueAtTime(f, now);
         const filter = ctx.createBiquadFilter();
         filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(260, now);
-
-        gain.gain.setValueAtTime(0.4, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
-
+        filter.frequency.setValueAtTime(320, now);
+        gain.gain.setValueAtTime(0.5, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
         osc.connect(filter);
         filter.connect(gain);
         routeToOutput(gain);
         osc.start(now);
-        osc.stop(now + 0.4);
-      } 
-      else if (track.id === 'chords') {
-        // Yumuşak Lo-Fi Pluck
-        [0, 4, 7].forEach((semi, idx) => {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.type = 'triangle';
-          const f = track.freq * Math.pow(2, semi / 12);
-          osc.frequency.setValueAtTime(f, now);
-
-          gain.gain.setValueAtTime(0.12, now + (idx * 0.015));
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
-
-          osc.connect(gain);
-          routeToOutput(gain);
-          osc.start(now);
-          osc.stop(now + 0.5);
-        });
-      } 
-      else if (track.id === 'melody') {
-        // Çan / Sine
+        osc.stop(now + 0.3);
+      }
+      else if (track.id === 'lead') {
+        // Makam Melodisi
+        const noteIdx = (stepIdx * 2) % currentMode.length;
+        const freq = currentMode[noteIdx];
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(track.freq, now);
-
-        gain.gain.setValueAtTime(0.2, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
-
-        osc.connect(gain);
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(freq, now);
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(1400, now);
+        gain.gain.setValueAtTime(0.18, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+        osc.connect(filter);
+        filter.connect(gain);
         routeToOutput(gain);
         osc.start(now);
-        osc.stop(now + 0.6);
+        osc.stop(now + 0.35);
       }
     }
 
-    // Grid'i HTML Olarak İnşa Et
+    // Grid'i Oluştur
     const gridEl = document.getElementById('grid');
     function buildGrid() {
       gridEl.innerHTML = '';
@@ -387,7 +431,21 @@
 
         const info = document.createElement('div');
         info.className = 'track-info';
-        info.textContent = track.name;
+        
+        const titleSpan = document.createElement('span');
+        titleSpan.textContent = track.name;
+        
+        const muteBtn = document.createElement('button');
+        muteBtn.className = `mute-btn ${muteState[track.id] ? 'muted' : ''}`;
+        muteBtn.textContent = 'M';
+        muteBtn.title = 'Sessize Al';
+        muteBtn.addEventListener('click', () => {
+          muteState[track.id] = !muteState[track.id];
+          muteBtn.classList.toggle('muted', muteState[track.id]);
+        });
+
+        info.appendChild(titleSpan);
+        info.appendChild(muteBtn);
         row.appendChild(info);
 
         const stepsCont = document.createElement('div');
@@ -402,7 +460,7 @@
             getAudioContext();
             gridState[track.id][i] = !gridState[track.id][i];
             btn.classList.toggle('active', gridState[track.id][i]);
-            if (gridState[track.id][i]) playSound(track);
+            if (gridState[track.id][i]) playInstrument(track, i);
           });
 
           stepsCont.appendChild(btn);
@@ -413,19 +471,17 @@
       });
     }
 
-    // Adım Adım İlerleme (Playhead)
+    // Playhead Döngüsü
     function step() {
-      // Önceki adımların vurgusunu kaldır
       document.querySelectorAll('.step-btn.playing').forEach(el => el.classList.remove('playing'));
 
-      // Şimdiki adımı vurgula ve çalanları tetikle
       TRACKS.forEach((track, trackIdx) => {
         const row = gridEl.children[trackIdx];
         const stepBtn = row.querySelectorAll('.step-btn')[currentStep];
         stepBtn.classList.add('playing');
 
         if (gridState[track.id][currentStep]) {
-          playSound(track);
+          playInstrument(track, currentStep);
         }
       });
 
@@ -439,7 +495,7 @@
       playBtn.classList.add('play-active');
 
       const bpm = parseInt(document.getElementById('bpmSlider').value);
-      const intervalMs = (60 / bpm / 4) * 1000; // 16'lık nota aralığı
+      const intervalMs = (60 / bpm / 4) * 1000;
       intervalId = setInterval(step, intervalMs);
     }
 
@@ -452,7 +508,6 @@
       document.querySelectorAll('.step-btn.playing').forEach(el => el.classList.remove('playing'));
     }
 
-    // Buton Dinleyicileri
     const playBtn = document.getElementById('playBtn');
     playBtn.addEventListener('click', () => {
       if (isPlaying) stopPlayback();
@@ -471,6 +526,77 @@
     document.getElementById('clearBtn').addEventListener('click', () => {
       resetGridState();
       buildGrid();
+    });
+
+    // Hazır Şablonlar (Presets)
+    const PRESETS = {
+      oriental: {
+        bpm: 118,
+        mode: 'hicaz',
+        pattern: {
+          dum:    [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0], // Düm-Tek Düm-Tek ritmi
+          tek:    [0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0],
+          shaker: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], // Kıvrak ziller
+          kick:   [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+          snare:  [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+          bass:   [1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0],
+          lead:   [1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0]
+        }
+      },
+      club: {
+        bpm: 126,
+        mode: 'clubDance',
+        pattern: {
+          dum:    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          tek:    [0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0],
+          shaker: [0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0], // Offbeat Hi-hat
+          kick:   [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0], // 4/4 Floor Kick
+          snare:  [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+          bass:   [0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0],
+          lead:   [1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0]
+        }
+      },
+      trap: {
+        bpm: 135,
+        mode: 'harmonic',
+        pattern: {
+          dum:    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          tek:    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          shaker: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], // Hızlı Trap Hi-hat
+          kick:   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+          snare:  [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+          bass:   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+          lead:   [1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0]
+        }
+      },
+      lofi: {
+        bpm: 85,
+        mode: 'clubDance',
+        pattern: {
+          dum:    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          tek:    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          shaker: [0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0],
+          kick:   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+          snare:  [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+          bass:   [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+          lead:   [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0]
+        }
+      }
+    };
+
+    document.getElementById('presetSelect').addEventListener('change', (e) => {
+      const p = PRESETS[e.target.value];
+      if (!p) return;
+      document.getElementById('bpmSlider').value = p.bpm;
+      document.getElementById('bpmVal').textContent = `${p.bpm} BPM`;
+      document.getElementById('modeSelect').value = p.mode;
+
+      TRACKS.forEach(track => {
+        gridState[track.id] = (p.pattern[track.id] || []).map(v => !!v);
+      });
+
+      buildGrid();
+      if (!isPlaying) startPlayback();
     });
 
     // Site İçi Kaydetme (LocalStorage)
@@ -494,8 +620,9 @@
         title.textContent = `🎵 ${name}`;
         title.addEventListener('click', () => {
           gridState = JSON.parse(JSON.stringify(saved[name].state));
-          document.getElementById('bpmSlider').value = saved[name].bpm || 105;
-          document.getElementById('bpmVal').textContent = `${saved[name].bpm || 105} BPM`;
+          document.getElementById('bpmSlider').value = saved[name].bpm || 112;
+          document.getElementById('bpmVal').textContent = `${saved[name].bpm || 112} BPM`;
+          document.getElementById('modeSelect').value = saved[name].mode || 'hicaz';
           buildGrid();
         });
 
@@ -516,19 +643,20 @@
 
     document.getElementById('saveSongBtn').addEventListener('click', () => {
       const nameInput = document.getElementById('songName');
-      const name = nameInput.value.trim() || `Beat #${Math.floor(Math.random() * 900 + 100)}`;
+      const name = nameInput.value.trim() || `Ritim #${Math.floor(Math.random() * 900 + 100)}`;
       const saved = JSON.parse(localStorage.getItem('my_beats') || '{}');
       saved[name] = {
         state: gridState,
-        bpm: document.getElementById('bpmSlider').value
+        bpm: document.getElementById('bpmSlider').value,
+        mode: document.getElementById('modeSelect').value
       };
       localStorage.setItem('my_beats', JSON.stringify(saved));
       nameInput.value = '';
       renderSavedList();
-      alert(`"${name}" site içine kaydedildi!`);
+      alert(`"${name}" başarıyla siteye kaydedildi!`);
     });
 
-    // 1 Döngü Kaydedip Bilgisayara İndirme (Audio Export)
+    // Ses İndirme (Audio Export)
     const exportBtn = document.getElementById('exportAudioBtn');
     exportBtn.addEventListener('click', () => {
       getAudioContext();
@@ -542,7 +670,7 @@
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'muzigim.webm';
+        a.download = 'dans-ritmim.webm';
         a.click();
         exportBtn.textContent = '📥 WAV İndir';
         exportBtn.classList.remove('record-active');
@@ -552,7 +680,6 @@
       exportBtn.textContent = '🔴 Kaydediliyor...';
       exportBtn.classList.add('record-active');
 
-      // 1 tam döngü (16 adım) bittiğinde otomatik durdur ve indir
       const bpm = parseInt(document.getElementById('bpmSlider').value);
       const totalLoopTime = ((60 / bpm / 4) * 16) * 1000;
       setTimeout(() => {
@@ -562,7 +689,7 @@
       }, totalLoopTime);
     });
 
-    // Başlangıç Kurulumu
+    // Başlat
     buildGrid();
     renderSavedList();
   </script>
